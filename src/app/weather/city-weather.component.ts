@@ -3,21 +3,7 @@ import {WeatherService} from "./weather.service";
 import {BehaviorSubject, Observable, of} from "rxjs";
 import {WeatherData} from "./weather-data";
 import {map, switchMap} from "rxjs/operators";
-import {animate, query, stagger, style, transition, trigger} from "@angular/animations";
-
-const listAnimation = trigger('listAnimation', [
-  transition('* <=> *', [
-    query(':enter',
-      [style({ height: 0, overflow: 'hidden', opacity: 0 }),
-        stagger('60ms', animate('600ms ease-out', style({ height: '*', overflow: 'none', opacity: 1 })))],
-      { optional: true }
-    ),
-    query(':leave',
-      animate('500ms', style({ height: 0, overflow: 'hidden', opacity: 0 })),
-      { optional: true }
-    )
-  ])
-]);
+import {listFoldingAnimation} from "../common/list-folding.animation";
 
 @Component({
   selector: 'chl-city-weather',
@@ -26,28 +12,34 @@ const listAnimation = trigger('listAnimation', [
   template: `
     <div (click)="toggleForecast()">
       <h1>{{city}}</h1>
-      <div *ngIf="weatherDataList$ | async as list" >
-        <div [@listAnimation]="list.length">
-          <chl-weather class="weather__info" *ngFor="let item of list; trackBy: trackByFn" [weatherData]="item"></chl-weather>
+      <small>Click for forecast!</small>
+      <chl-weather *ngIf="currentWeatherData$ | async as data" class="weather__info" [weatherData]="data">
+      </chl-weather>
+      <ng-container *ngIf="forecastData$ | async as list">
+        <div [@listFolding]="list.length">
+          <chl-weather class="weather__info" *ngFor="let item of list; trackBy: trackByFn"
+                       [weatherData]="item"></chl-weather>
         </div>
-      </div>
+      </ng-container>
     </div>
   `,
-  animations: [listAnimation]
+  animations: [listFoldingAnimation]
 })
 export class CityWeatherComponent implements OnInit {
   @Input() city: string = '';
   currentWeatherVisible$ = new BehaviorSubject(true);
-  weatherDataList$: Observable<WeatherData[]> = of([]);
+  currentWeatherData$: Observable<WeatherData> | undefined;
+  forecastData$: Observable<WeatherData[]> = of([]);
   trackByFn: TrackByFunction<WeatherData> = (index, item) => item.timestamp;
 
   constructor(private weatherService: WeatherService) {
   }
 
   ngOnInit() {
-    this.weatherDataList$ = this.currentWeatherVisible$.pipe(
+    this.currentWeatherData$ = this.weatherService.fetchWeatherDataForCity(this.city);
+    this.forecastData$ = this.currentWeatherVisible$.pipe(
       switchMap(current => current
-        ? this.weatherService.fetchWeatherDataForCity(this.city).pipe(map(x => [x]))
+        ? of([])
         : this.weatherService.fetchForecastForCity(this.city))
     );
   }

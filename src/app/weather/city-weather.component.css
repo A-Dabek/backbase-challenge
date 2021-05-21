@@ -2,3 +2,9 @@
   display: block;
   margin-top: 0.5rem;
 }
+h1 {
+  margin-bottom: 0rem;
+}
+small {
+  margin-bottom: 0.5rem;
+}
