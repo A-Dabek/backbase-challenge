@@ -28,8 +28,8 @@ export class CityWeatherComponent implements OnInit {
 
   fetchData() {
     this.weatherDataList$ = this.currentWeatherVisible
-      ? this.weatherService.fetchWeatherDataForCity().pipe(map(x => [x]))
-      : this.weatherService.fetchForecastForCity();
+      ? this.weatherService.fetchWeatherDataForCity(this.city).pipe(map(x => [x]))
+      : this.weatherService.fetchForecastForCity(this.city);
   }
 
   toggleForecast() {

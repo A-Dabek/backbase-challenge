@@ -5,8 +5,9 @@ import {WeatherData} from "./weather-data";
   selector: 'chl-weather',
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <div>{{weatherData.averageTemperature}}</div>
-    <div>{{weatherData.windStrength}}</div>
+    <label>Time: <span>{{weatherData.timestamp | timestamp}}</span></label>
+    <label>Temperature: <span>{{weatherData.averageTemperature}}°C</span></label>
+    <label>Wind: <span>{{weatherData.windStrength}} m/s</span></label>
   `
 })
 export class WeatherComponent {
