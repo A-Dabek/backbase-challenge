@@ -11,11 +11,11 @@ import {WeatherData} from "./weather-data";
     </label>
     <div class="flex">
       <label>Temperature:</label>
-      <span>{{weatherData.averageTemperature}}°C</span>
+      <span class="weather__temp">{{weatherData.averageTemperature}}°C</span>
     </div>
     <div class="flex">
       <label>Wind:</label>
-      <span>{{weatherData.windStrength}} m/s</span>
+      <span class="weather__wind">{{weatherData.windStrength}} m/s</span>
     </div>
   `
 })

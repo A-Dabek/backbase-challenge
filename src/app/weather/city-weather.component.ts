@@ -2,7 +2,7 @@ import {ChangeDetectionStrategy, Component, Input, OnInit, TrackByFunction} from
 import {WeatherService} from "./weather.service";
 import {BehaviorSubject, Observable, of} from "rxjs";
 import {WeatherData} from "./weather-data";
-import {map, switchMap} from "rxjs/operators";
+import {switchMap} from "rxjs/operators";
 import {listFoldingAnimation} from "../common/list-folding.animation";
 
 @Component({
