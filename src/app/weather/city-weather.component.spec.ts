@@ -3,7 +3,7 @@ import {WeatherModule} from "./weather.module";
 import {AppModule} from "../app.module";
 import {HttpClientTestingModule, HttpTestingController} from "@angular/common/http/testing";
 import {CityWeatherComponent} from "./city-weather.component";
-import {RawCurrentWeather} from "./weather-data";
+import {RawCurrentWeather, RawWeatherForecast} from "./weather-data";
 import {By} from "@angular/platform-browser";
 import {BrowserTestingModule} from "@angular/platform-browser/testing";
 import {NoopAnimationsModule} from "@angular/platform-browser/animations";
@@ -23,15 +23,28 @@ describe('City Weather Component', () => {
     });
     fixture = TestBed.createComponent(CityWeatherComponent);
     controller = TestBed.inject(HttpTestingController);
-  });
-
-  it('should fetch and show current weather', async () => {
     fixture.componentInstance.city = 'Test';
     fixture.detectChanges();
+  });
+
+  function verifyWeatherInfo(index: number, timestamp: number, temp: number, wind: number) {
+    const times = fixture.debugElement.queryAll(By.css('.label__time'))
+      .map(de => de.nativeElement as HTMLSpanElement);
+    const temps = fixture.debugElement.queryAll(By.css('.weather__temp'))
+      .map(de => de.nativeElement as HTMLSpanElement);
+    const winds = fixture.debugElement.queryAll(By.css('.weather__wind'))
+      .map(de => de.nativeElement as HTMLSpanElement);
 
     const date = new Date();
-    const timestamp = date.getTime();
+    date.setTime(timestamp);
     const timeText = date.toLocaleTimeString();
+    expect(times[index].textContent).toContain(timeText);
+    expect(temps[index].textContent).toEqual(`${temp}°C`);
+    expect(winds[index].textContent).toEqual(`${wind} m/s`);
+  }
+
+  it('should fetch and show current weather', async () => {
+    const timestamp = new Date().getTime();
     const response: RawCurrentWeather = {
       dt: timestamp / 1000,
       wind: {speed: 1},
@@ -41,26 +54,80 @@ describe('City Weather Component', () => {
 
     controller.expectOne({method: 'get'}).flush(response);
     fixture.detectChanges();
-    await fixture.whenRenderingDone();
-    await fixture.whenStable();
-    fixture.detectChanges();
 
-    const time = fixture.debugElement.query(By.css('.label__time')).nativeElement as HTMLLabelElement;
-    const temp = fixture.debugElement.query(By.css('.weather__temp')).nativeElement as HTMLSpanElement;
-    const wind = fixture.debugElement.query(By.css('.weather__wind')).nativeElement as HTMLSpanElement;
-
-    expect(time.textContent).toContain(timeText);
-    expect(temp.textContent).toEqual('2°C');
-    expect(wind.textContent).toEqual('1 m/s');
-
+    verifyWeatherInfo(0, timestamp, 2, 1);
     controller.verify();
   });
 
   it('should show NaN values in case of fetching error', () => {
+    controller.expectOne({method: 'get'}).error(new ErrorEvent(''));
+    fixture.detectChanges();
+
+    verifyWeatherInfo(0, NaN, NaN, NaN);
+    controller.verify();
   });
 
-  it('should fetch and show weather forecast on click', () => {
+  it('should fetch and show next 5 hours of weather forecast on click', () => {
+    const timestamp = new Date().getTime();
 
+    const response: RawCurrentWeather = {
+      dt: timestamp / 1000,
+      wind: {speed: 0.1},
+      main: {temp: 0.2},
+      coord: {lat: 3, lon: 4}
+    };
+    const forecastResponse: RawWeatherForecast = {
+      hourly: new Array(7).fill(1).map((_, index) => ({
+        dt: (timestamp / 1000) + index,
+        wind_speed: 100 + index,
+        temp: 1000 + index,
+      }))
+    };
+
+    controller.expectOne({method: 'get'}).flush(response);
+    fixture.detectChanges();
+
+    const container = fixture.debugElement.query(By.css('.container')).nativeElement as HTMLDivElement;
+    container.click();
+    controller.expectOne({method: 'get'}).flush(forecastResponse);
+    fixture.detectChanges();
+
+    const weatherInfos = fixture.debugElement.queryAll(By.css('.weather__info'));
+    expect(weatherInfos.length).toEqual(6);
+
+    verifyWeatherInfo(0, timestamp, 0.2, 0.1);
+    // skips first, and picks next 5
+    verifyWeatherInfo(1, timestamp+1000, 1001, 101);
+    verifyWeatherInfo(2, timestamp+2000, 1002, 102);
+    verifyWeatherInfo(3, timestamp+3000, 1003, 103);
+    verifyWeatherInfo(4, timestamp+4000, 1004, 104);
+    verifyWeatherInfo(5, timestamp+5000, 1005, 105);
+    controller.verify();
+  });
+
+  it('should not show forecast on click if there was a fetching error', () => {
+    const timestamp = new Date().getTime();
+
+    const response: RawCurrentWeather = {
+      dt: timestamp / 1000,
+      wind: {speed: 0.1},
+      main: {temp: 0.2},
+      coord: {lat: 3, lon: 4}
+    };
+
+    controller.expectOne({method: 'get'}).flush(response);
+    fixture.detectChanges();
+
+    const container = fixture.debugElement.query(By.css('.container')).nativeElement as HTMLDivElement;
+    container.click();
+    controller.expectOne({method: 'get'}).error(new ErrorEvent(''));
+    fixture.detectChanges();
+
+    const weatherInfos = fixture.debugElement.queryAll(By.css('.weather__info'));
+    expect(weatherInfos.length).toEqual(1);
+
+    verifyWeatherInfo(0, timestamp, 0.2, 0.1);
+    controller.verify();
   });
 
 });

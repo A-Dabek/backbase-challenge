@@ -10,7 +10,7 @@ import {listFoldingAnimation} from "../common/list-folding.animation";
   changeDetection: ChangeDetectionStrategy.OnPush,
   styleUrls: ['./city-weather.component.css'],
   template: `
-    <div (click)="toggleForecast()">
+    <div class="container" (click)="toggleForecast()">
       <h1>{{city}}</h1>
       <small>Click for forecast!</small>
       <chl-weather *ngIf="currentWeatherData$ | async as data" class="weather__info" [weatherData]="data">

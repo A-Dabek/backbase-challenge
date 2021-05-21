@@ -54,7 +54,7 @@ export class WeatherService {
           averageTemperature: item.temp,
           windStrength: item.wind_speed
         }))),
-      catchError(() => of([this.erroneousData]))
+      catchError(() => of([]))
     );
   }
 }
