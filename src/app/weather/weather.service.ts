@@ -1,5 +1,5 @@
 import {Injectable} from "@angular/core";
-import {Observable, of} from "rxjs";
+import {Observable} from "rxjs";
 import {RawCurrentWeather, RawWeatherForecast, WeatherData} from "./weather-data";
 import {HttpClient, HttpParams} from "@angular/common/http";
 import {map, tap} from "rxjs/operators";
