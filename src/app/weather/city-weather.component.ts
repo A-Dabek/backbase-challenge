@@ -7,11 +7,12 @@ import {map, switchMap} from "rxjs/operators";
 @Component({
   selector: 'chl-city-weather',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  styleUrls: ['./city-weather.component.css'],
   template: `
     <div (click)="toggleForecast()">
       <h1>{{city}}</h1>
       <ng-container *ngIf="weatherDataList$ | async as list">
-        <chl-weather *ngFor="let item of list" [weatherData]="item"></chl-weather>
+        <chl-weather class="weather__info" *ngFor="let item of list" [weatherData]="item"></chl-weather>
       </ng-container>
     </div>
   `

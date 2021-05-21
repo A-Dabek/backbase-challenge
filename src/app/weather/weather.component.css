@@ -1,0 +1,8 @@
+.label__time {
+  font-weight: bold;
+}
+
+.flex {
+  display: flex;
+  justify-content: space-between;
+}

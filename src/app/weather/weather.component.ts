@@ -4,11 +4,18 @@ import {WeatherData} from "./weather-data";
 @Component({
   selector: 'chl-weather',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  styleUrls: ['./weather.component.css'],
   template: `
-    <div>
-      <label>Time: <span>{{weatherData.timestamp | timestamp}}</span></label>
-      <label>Temperature: <span>{{weatherData.averageTemperature}}°C</span></label>
-      <label>Wind: <span>{{weatherData.windStrength}} m/s</span></label>
+    <label class="label__time">
+      {{weatherData.timestamp | timestamp}}
+    </label>
+    <div class="flex">
+      <label>Temperature:</label>
+      <span>{{weatherData.averageTemperature}}°C</span>
+    </div>
+    <div class="flex">
+      <label>Wind:</label>
+      <span>{{weatherData.windStrength}} m/s</span>
     </div>
   `
 })

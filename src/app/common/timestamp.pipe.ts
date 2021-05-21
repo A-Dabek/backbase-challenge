@@ -8,6 +8,6 @@ export class TimestampPipe implements PipeTransform {
   transform(value: number): string {
     const date = new Date();
     date.setTime(value * 1000);
-    return date.toTimeString();
+    return date.toLocaleTimeString();
   }
 }

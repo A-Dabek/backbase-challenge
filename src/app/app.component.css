@@ -1,0 +1,4 @@
+main {
+  width: min(250px, 100%);
+  margin: auto;
+}

@@ -1,14 +1,19 @@
 import {Injectable} from "@angular/core";
-import {Observable} from "rxjs";
+import {Observable, of} from "rxjs";
 import {RawCurrentWeather, RawWeatherForecast, WeatherData} from "./weather-data";
 import {HttpClient, HttpParams} from "@angular/common/http";
-import {map, tap} from "rxjs/operators";
+import {catchError, map, tap} from "rxjs/operators";
 
 
 @Injectable({providedIn: "root"})
 export class WeatherService {
-  private apiKey: string = '894025b7d489fd3d19ef44bd5bd10eaf';
+  private apiKey: string = '894025b7d489fd3d19ef44bd5bd10eaf1';
   private coordinationCache: { [k: string]: { lon: number, lat: number } } = {};
+  private erroneousData: WeatherData = {
+    timestamp: NaN,
+    averageTemperature: NaN,
+    windStrength: NaN
+  };
 
   constructor(private http: HttpClient) {
   }
@@ -29,7 +34,8 @@ export class WeatherService {
         timestamp: e.dt,
         averageTemperature: e.main.temp,
         windStrength: e.wind.speed
-      }))
+      })),
+      catchError(() => of(this.erroneousData))
     );
   }
 
@@ -48,6 +54,7 @@ export class WeatherService {
           averageTemperature: item.temp,
           windStrength: item.wind_speed
         }))),
+      catchError(() => of([this.erroneousData]))
     );
   }
 }
