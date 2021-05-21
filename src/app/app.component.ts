@@ -1,18 +1,21 @@
-import {Component} from '@angular/core';
+import {ChangeDetectionStrategy, Component} from '@angular/core';
 import {WeatherData} from "./weather/weather-data";
 
 @Component({
   selector: 'app-root',
   styleUrls: ['./app.component.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <chl-weather [weatherData]="weatherData"></chl-weather>
+    <chl-city-weather-list [cities]="cities">
+    </chl-city-weather-list>
   `
 })
 export class AppComponent {
-  title = 'backbase-challenge';
-
-  weatherData: WeatherData = {
-    windStrength: 'asd',
-    averageTemperature: 15
-  };
+  cities = [
+    'Warsaw',
+    'London',
+    'Paris',
+    'Athens',
+    'Berlin'
+  ];
 }

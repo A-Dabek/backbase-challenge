@@ -1,11 +1,19 @@
 import {NgModule} from "@angular/core";
 import {WeatherComponent} from "./weather.component";
+import {CityWeatherListComponent} from "./city-weather-list.component";
+import {CommonModule} from "@angular/common";
+import {CityWeatherComponent} from "./city-weather.component";
 
 @NgModule({
-  exports: [
-    WeatherComponent
+  declarations: [
+    WeatherComponent,
+    CityWeatherComponent,
+    CityWeatherListComponent,
   ],
-  declarations: [WeatherComponent]
+  imports: [CommonModule],
+  exports: [
+    CityWeatherListComponent
+  ],
 })
 export class WeatherModule {
 
