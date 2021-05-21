@@ -4,6 +4,7 @@ import {BrowserModule} from '@angular/platform-browser';
 import {AppComponent} from './app.component';
 import {WeatherModule} from "./weather/weather.module";
 import {HttpClientModule} from "@angular/common/http";
+import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
 
 @NgModule({
   declarations: [
@@ -12,7 +13,8 @@ import {HttpClientModule} from "@angular/common/http";
   imports: [
     BrowserModule,
     WeatherModule,
-    HttpClientModule
+    HttpClientModule,
+    BrowserAnimationsModule
   ],
   providers: [],
   bootstrap: [AppComponent]

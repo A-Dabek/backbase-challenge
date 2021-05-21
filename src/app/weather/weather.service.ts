@@ -7,7 +7,7 @@ import {catchError, map, tap} from "rxjs/operators";
 
 @Injectable({providedIn: "root"})
 export class WeatherService {
-  private apiKey: string = '894025b7d489fd3d19ef44bd5bd10eaf1';
+  private apiKey: string = '894025b7d489fd3d19ef44bd5bd10eaf';
   private coordinationCache: { [k: string]: { lon: number, lat: number } } = {};
   private erroneousData: WeatherData = {
     timestamp: NaN,
